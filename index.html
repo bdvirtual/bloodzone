@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BloodZone - Find a Donor</title>
   <meta name="description" content="BloodZone - Connect with blood donors to save lives.">
   <meta name="keywords" content="blood donation, blood bank, find donors">
@@ -10,14 +10,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Inter', sans-serif; }
-    .blood-cell-btn {
-      width: 48px; height: 48px; border-radius: 50%;
-      background-color: rgba(255, 255, 255, 0.8); color: #DC2626;
-      font-weight: 700; display: flex; align-items: center; justify-content: center;
-      border: 2px solid transparent; transition: all 0.2s ease-in-out; cursor: pointer;
-    }
-    .blood-cell-btn.active { background-color: white; border-color: #DC2626; box-shadow: 0 0 0 3px rgba(220,38,38,0.3); }
-    .blood-cell-btn:hover { background-color: white; transform: scale(1.05); }
   </style>
 </head>
 <body class="bg-gray-50">
@@ -25,153 +17,150 @@
   <!-- Header -->
   <header class="bg-white shadow-md sticky top-0 z-50">
     <div class="container mx-auto px-6 py-3 flex justify-between items-center">
-      <h1 class="text-xl font-bold text-red-600">BloodZone</h1>
-      <a href="https://docs.google.com/forms/d/e/1FAIpQLSe2WB1FkMeNVb_OYFr5l3Vz4-fI4f-9bQWzJiihm34hAaJYIw/viewform" target="_blank" class="bg-red-600 text-white font-semibold px-5 py-2 rounded-lg hover:bg-red-700">
-        Register Now
-      </a>
+      <h1 class="text-2xl font-bold text-red-600">BloodZone</h1>
+      <a href="#find-donors" class="bg-red-600 text-white font-semibold px-5 py-2 rounded-lg hover:bg-red-700">Find Donors</a>
     </div>
   </header>
 
-  <!-- Find Donors Section -->
-  <section class="bg-red-600 text-white py-16">
-    <div class="container mx-auto px-6 text-center">
-      <h1 class="text-4xl font-bold mb-4">Find a Lifesaver Near You</h1>
-      <blockquote class="text-lg text-red-100 italic mb-8 max-w-3xl mx-auto">
-        "And whoever saves one – it is as if he had saved mankind entirely." (5:32)
-      </blockquote>
-
-      <!-- Filters -->
-      <div class="bg-white/10 backdrop-blur-sm p-6 rounded-xl max-w-4xl mx-auto">
-        <div class="flex flex-wrap gap-3 justify-center mb-6" id="blood-group-buttons">
-          <button type="button" data-group="" class="blood-cell-btn active">All</button>
-          <button type="button" data-group="A+" class="blood-cell-btn">A+</button>
-          <button type="button" data-group="A-" class="blood-cell-btn">A-</button>
-          <button type="button" data-group="B+" class="blood-cell-btn">B+</button>
-          <button type="button" data-group="B-" class="blood-cell-btn">B-</button>
-          <button type="button" data-group="AB+" class="blood-cell-btn">AB+</button>
-          <button type="button" data-group="AB-" class="blood-cell-btn">AB-</button>
-          <button type="button" data-group="O+" class="blood-cell-btn">O+</button>
-          <button type="button" data-group="O-" class="blood-cell-btn">O-</button>
-        </div>
-        <button id="search-btn" class="w-full bg-white text-red-600 font-bold p-3 rounded-lg hover:bg-red-100">Search</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- Results -->
-  <main class="py-16">
-    <div class="container mx-auto px-6">
-      <h2 class="text-2xl font-bold text-gray-800 mb-8">Search Results</h2>
-      <div id="loading-indicator" class="text-center py-8"><p class="text-xl text-gray-500">Loading donors...</p></div>
-      <div id="donor-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 hidden"></div>
-      <div id="no-results" class="hidden text-center py-8"><p class="text-xl text-gray-500">No donors found.</p></div>
-    </div>
-  </main>
+  <!-- Main Content -->
+  <main id="app-content"></main>
 
   <!-- Footer -->
-  <footer class="bg-gray-800 text-white py-8 text-center">
-    <p>&copy; <span id="year"></span> BloodZone. Saving lives, one drop at a time.</p>
+  <footer class="bg-gray-800 text-white py-8 mt-16">
+    <div class="container mx-auto px-6 text-center text-sm">
+      <p>&copy; <span id="year"></span> BloodZone. Saving lives, one drop at a time.</p>
+    </div>
   </footer>
 
-<script>
-const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzcu53NZv5u9tcNfpiv2Cnh_EIm3AhToodEN9_IQvssuEYnL-VE6z9sufsXp5_o3Ij2hi2ou158C6F/pub?output=csv";
+  <!-- Find Donors Template -->
+  <template id="find-donors-template">
+    <section class="bg-red-600 text-white py-16 text-center">
+      <h1 class="text-4xl font-bold mb-4">Find a Lifesaver Near You</h1>
+      <blockquote class="text-lg text-red-100 italic mb-8">
+        "And whoever saves one – it is as if he had saved mankind entirely." (5:32)
+      </blockquote>
+    </section>
 
-let allDonors = [], filteredDonors = [], selectedBloodGroup = "";
+    <main class="py-16">
+      <div class="container mx-auto px-6 grid grid-cols-1 lg:grid-cols-4 gap-8">
+        
+        <!-- Donor Grid -->
+        <div class="lg:col-span-3">
+          <h2 class="text-2xl font-bold text-gray-800 mb-8">Search Results</h2>
+          <div id="loading-indicator" class="text-center py-8"><p class="text-xl text-gray-500">Loading donors...</p></div>
+          <div id="donor-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8 hidden"></div>
+          <div id="no-results" class="hidden text-center py-8"><p class="text-xl text-gray-500">No donors found.</p></div>
+        </div>
 
-function csvToJson(csv) {
-  const lines = csv.split(/\r?\n/);
-  if (lines.length < 2) return [];
-  const headers = lines[0].split(",").map(h => h.trim().replace(/"/g,""));
-  const headerMapping = {
-    "Full Name": "Name",
-    "Gender": "Gender",
-    "Blood Group": "BloodGroup",
-    "Phone Number": "Phone",
-    "Emergency Contact Name & Number": "EmergencyContact",
-    "Present Address (Area, Word, Thana, City/District)": "Location",
-    "Are you currently healthy and free from major illness?": "HealthStatus",
-    "Have you had any surgery or serious illness in the last 6 months?": "RecentSurgery",
-    "Are you currently taking any medication? (If yes, please mention)": "OnMedication"
-  };
-  const indices = {};
-  headers.forEach((h,i)=>{ if(headerMapping[h]) indices[headerMapping[h]] = i; });
-  const result = [];
-  for (let i=1;i<lines.length;i++){
-    if(!lines[i]) continue;
-    const values = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v=>v.trim().replace(/"/g,""));
-    const donor = {
-      Name: values[indices.Name],
-      Gender: values[indices.Gender],
-      BloodGroup: values[indices.BloodGroup],
-      Phone: values[indices.Phone],
-      EmergencyContact: values[indices.EmergencyContact],
-      Location: values[indices.Location],
-      Status: values[indices.HealthStatus]==="Yes" ? "Available" : "Unavailable",
-      RecentSurgery: values[indices.RecentSurgery],
-      OnMedication: values[indices.OnMedication]
-    };
-    if(donor.Name) result.push(donor);
-  }
-  return result;
-}
+        <!-- Sidebar Stats -->
+        <aside class="lg:col-span-1">
+          <div class="bg-white rounded-xl shadow-lg p-6 sticky top-24">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Donor Statistics</h3>
+            <p class="text-gray-600 mb-2"><strong>Matching Donors:</strong> <span id="matching-count">0</span></p>
+            <p class="text-gray-600"><strong>Total Donors:</strong> <span id="total-count">0</span></p>
+          </div>
+        </aside>
 
-function createDonorCard(donor){
-  const div = document.createElement("div");
-  div.className="bg-white rounded-xl shadow-lg p-6";
-  div.innerHTML=`
-    <div class="flex items-center space-x-4 mb-4">
-      <div class="flex-shrink-0 w-16 h-16 bg-red-100 text-red-600 text-2xl font-bold rounded-full flex items-center justify-center">${donor.BloodGroup}</div>
-      <div><h3 class="text-lg font-bold text-gray-800">${donor.Name}</h3></div>
-    </div>
-    <p class="text-gray-600"><strong>Gender:</strong> ${donor.Gender}</p>
-    <p class="text-gray-600"><strong>Phone:</strong> ${donor.Phone}</p>
-    <p class="text-gray-600"><strong>Location:</strong> ${donor.Location}</p>
-  `;
-  return div;
-}
+      </div>
+    </main>
+  </template>
 
-function renderDonors(){
-  const donorGrid=document.getElementById("donor-grid");
-  const loading=document.getElementById("loading-indicator");
-  const noResults=document.getElementById("no-results");
-  donorGrid.innerHTML="";
-  loading.classList.add("hidden");
-  if(filteredDonors.length===0){ noResults.classList.remove("hidden"); donorGrid.classList.add("hidden"); return; }
-  noResults.classList.add("hidden"); donorGrid.classList.remove("hidden");
-  filteredDonors.forEach(d=> donorGrid.appendChild(createDonorCard(d)));
-}
+  <!-- JS -->
+  <script>
+    const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzcu53NZv5u9tcNfpiv2Cnh_EIm3AhToodEN9_IQvssuEYnL-VE6z9sufsXp5_o3Ij2hi2ou158C6F/pub?output=csv";
+    let allDonors = [];
+    let filteredDonors = [];
 
-function filterDonors(){
-  filteredDonors = allDonors.filter(d => !selectedBloodGroup || d.BloodGroup===selectedBloodGroup);
-  renderDonors();
-}
+    function csvToJson(csv) {
+      const lines = csv.split(/\r?\n/);
+      const result = [];
+      const headers = lines[0].split(",");
 
-async function fetchDonors(){
-  try {
-    const res=await fetch(GOOGLE_SHEET_URL);
-    const text=await res.text();
-    allDonors=csvToJson(text);
-    filterDonors();
-  } catch(e){
-    console.error("Error fetching donors",e);
-  }
-}
+      for (let i = 1; i < lines.length; i++) {
+        if (!lines[i]) continue;
+        const values = lines[i].split(",");
+        const donor = {};
+        headers.forEach((h, j) => donor[h.trim()] = values[j] ? values[j].trim() : "");
+        result.push({
+          Name: donor["Full Name"],
+          Gender: donor["Gender"],
+          BloodGroup: donor["Blood Group"],
+          Phone: donor["Phone Number"],
+          Location: donor["Present Address (Area, Word, Thana, City/District)"],
+          Status: donor["Are you currently healthy and free from major illness?"] === "Yes" ? "Available" : "Unavailable"
+        });
+      }
+      return result;
+    }
 
-document.getElementById("blood-group-buttons").addEventListener("click",e=>{
-  if(e.target.matches(".blood-cell-btn")){
-    document.querySelectorAll(".blood-cell-btn").forEach(b=>b.classList.remove("active"));
-    e.target.classList.add("active");
-    selectedBloodGroup=e.target.dataset.group;
-  }
-});
+    function createDonorCard(donor) {
+      const card = document.createElement("div");
+      card.className = "bg-white rounded-xl shadow-lg p-6";
+      card.innerHTML = `
+        <div class="flex items-center space-x-4 mb-4">
+          <div class="w-12 h-12 bg-red-100 text-red-600 flex items-center justify-center font-bold rounded-full">${donor.BloodGroup || "?"}</div>
+          <h3 class="text-lg font-bold text-gray-800">${donor.Name || "Anonymous"}</h3>
+        </div>
+        <p class="text-gray-600"><strong>Gender:</strong> ${donor.Gender || "-"}</p>
+        <p class="text-gray-600"><strong>Phone:</strong> ${donor.Phone || "-"}</p>
+        <p class="text-gray-600"><strong>Location:</strong> ${donor.Location || "-"}</p>
+        <p class="mt-2 font-semibold ${donor.Status==="Available" ? "text-green-600":"text-red-600"}">${donor.Status}</p>
+      `;
+      return card;
+    }
 
-document.getElementById("search-btn").addEventListener("click",filterDonors);
+    function renderDonors() {
+      const donorGrid = document.getElementById("donor-grid");
+      const loading = document.getElementById("loading-indicator");
+      const noResults = document.getElementById("no-results");
 
-document.addEventListener("DOMContentLoaded",()=>{
-  document.getElementById("year").textContent=new Date().getFullYear();
-  fetchDonors();
-});
-</script>
+      donorGrid.innerHTML = "";
+      loading.classList.add("hidden");
 
+      document.getElementById("matching-count").textContent = filteredDonors.length;
+      document.getElementById("total-count").textContent = allDonors.length;
+
+      if (filteredDonors.length === 0) {
+        noResults.classList.remove("hidden");
+        donorGrid.classList.add("hidden");
+        return;
+      }
+      noResults.classList.add("hidden");
+      donorGrid.classList.remove("hidden");
+
+      filteredDonors.forEach(d => donorGrid.appendChild(createDonorCard(d)));
+    }
+
+    async function fetchDonors() {
+      try {
+        const res = await fetch(GOOGLE_SHEET_URL + "&t=" + new Date().getTime());
+        const text = await res.text();
+        allDonors = csvToJson(text);
+        filteredDonors = allDonors;
+        renderDonors();
+      } catch (err) {
+        console.error("Error fetching donors:", err);
+        document.getElementById("loading-indicator").innerHTML = "<p class='text-red-500'>Failed to load donor data.</p>";
+      }
+    }
+
+    function handleRouteChange() {
+      const hash = window.location.hash || "#find-donors";
+      const pageId = hash.substring(1);
+      const template = document.getElementById(`${pageId}-template`);
+      const appContent = document.getElementById("app-content");
+      appContent.innerHTML = "";
+      if (template) {
+        appContent.appendChild(template.content.cloneNode(true));
+        if (pageId === "find-donors") fetchDonors();
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("year").textContent = new Date().getFullYear();
+      handleRouteChange();
+      window.addEventListener("hashchange", handleRouteChange);
+    });
+  </script>
 </body>
 </html>
