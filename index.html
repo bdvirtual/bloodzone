@@ -1,7 +1,439 @@
-Matching Donors
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BloodZone - Find a Donor</title>
+  <meta name="description" content="BloodZone - Connect with blood donors to save lives.">
+  <meta name="keywords" content="blood donation, blood bank, find donors">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23DC2626' d='M50 5 C25 20 25 50 50 95 C75 50 75 20 50 5 Z'/%3E%3Cpath fill='%234CAF50' d='M45 35 H55 V25 H45 V35 M35 45 H45 V55 H35 V45 M55 45 H65 V55 H55 V45 M45 55 H55 V65 H45 V55'/%3E%3C/svg%3E" type="image/svg+xml">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .nav-link.active { color: #DC2626; border-bottom: 2px solid #DC2626; padding-bottom: 0.25rem; }
+    .mobile-nav-link.active { background-color: #FEE2E2; color: #DC2626; }
+    .blood-cell-btn { width: 48px; height: 48px; border-radius: 50%; background-color: rgba(255, 255, 255, 0.8); color: #DC2626; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 2px solid transparent; transition: all 0.2s ease-in-out; cursor: pointer; }
+    .blood-cell-btn:hover { background-color: white; transform: scale(1.05); }
+    .blood-cell-btn.active { background-color: white; border-color: #DC2626; box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.3); }
+    .modal-backdrop { transition: opacity 0.3s ease-in-out; }
+    .modal-content { transition: transform 0.3s ease-in-out; }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <!-- Header -->
+  <header class="bg-white shadow-md sticky top-0 z-50">
+    <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+      <div class="flex items-center space-x-4">
+        <a href="https://github.com/bdvirtual/bloodzone" target="_blank">
+          <img src="assets/logo.png" alt="BloodZone Logo" class="h-12 w-12 rounded-full object-cover">
+        </a>
+        <h1 class="text-2xl font-bold text-red-600">BloodZone</h1>
+      </div>
+      <nav class="hidden md:flex space-x-8">
+        <a href="#find-donors" class="nav-link text-gray-700 hover:text-red-600 font-medium router-link active">Find Donors</a>
+        <a href="#why-donate" class="nav-link text-gray-700 hover:text-red-600 font-medium router-link">Why Donate?</a>
+        <a href="#about-us" class="nav-link text-gray-700 hover:text-red-600 font-medium router-link">About Us</a>
+      </nav>
+      <div class="flex items-center space-x-4">
+        <a href="YOUR_FORM_URL" target="_blank" class="bg-red-600 text-white font-semibold px-5 py-2 rounded-lg hover:bg-red-700 hidden md:block">Register Now</a>
+        <button id="mobile-menu-btn" class="md:hidden text-gray-600 hover:text-red-600">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+        </button>
+      </div>
+    </div>
+  </header>
 
-0
+  <!-- Mobile Menu -->
+  <div id="mobile-menu-container" class="fixed inset-0 z-40 pointer-events-none">
+    <div id="mobile-menu-backdrop" class="absolute inset-0 bg-black bg-opacity-50 opacity-0"></div>
+    <div id="mobile-menu" class="absolute top-0 right-0 h-full w-64 bg-white shadow-xl p-6 transform translate-x-full">
+      <nav class="flex flex-col space-y-4 mt-8">
+        <a href="#find-donors" class="mobile-nav-link text-gray-700 hover:bg-gray-100 font-medium p-3 rounded-lg router-link">Find Donors</a>
+        <a href="#why-donate" class="mobile-nav-link text-gray-700 hover:bg-gray-100 font-medium p-3 rounded-lg router-link">Why Donate?</a>
+        <a href="#about-us" class="mobile-nav-link text-gray-700 hover:bg-gray-100 font-medium p-3 rounded-lg router-link">About Us</a>
+        <a href="YOUR_FORM_URL" target="_blank" class="mt-4 block text-center bg-red-600 text-white font-semibold px-5 py-3 rounded-lg hover:bg-red-700">Register Now</a>
+      </nav>
+    </div>
+  </div>
 
-Total Donors
+  <!-- Main Content -->
+  <main id="app-content"></main>
 
-0
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-8 mt-16">
+    <div class="container mx-auto px-6 text-center text-sm">
+      <p>Developed by <a href="https://github.com/bdvirtual" target="_blank" class="underline hover:text-red-300">bdvirtual</a></p>
+      <p class="mt-2">&copy; <span id="year"></span> BloodZone. Saving lives, one drop at a time.</p>
+    </div>
+  </footer>
+
+  <!-- Contact Modal -->
+  <div id="contact-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 modal-backdrop opacity-0 pointer-events-none">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm p-8 text-center modal-content transform scale-95">
+      <h2 class="text-2xl font-bold text-gray-800 mb-2">Contact Information</h2>
+      <p class="text-gray-500 mb-6">For donor privacy, direct contact is managed by BloodZone.</p>
+      <div id="contact-details" class="text-left bg-gray-50 p-4 rounded-lg space-y-2"></div>
+      <button id="close-contact-btn" class="mt-6 w-full bg-red-600 text-white font-semibold py-2 rounded-lg hover:bg-red-700">Close</button>
+    </div>
+  </div>
+
+  <!-- Templates -->
+  <template id="find-donors-template">
+    <section class="bg-red-600 text-white py-16 text-center">
+      <div class="container mx-auto px-6">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">Find a Lifesaver Near You</h1>
+        <blockquote class="text-lg text-red-100 italic mb-8 max-w-3xl mx-auto">
+          "And whoever saves one – it is as if he had saved mankind entirely." (5:32)
+        </blockquote>
+        <div id="blood-group-stats" class="mb-8 grid grid-cols-4 md:grid-cols-8 gap-2 max-w-2xl mx-auto"></div>
+        <div class="bg-white/10 backdrop-blur-sm p-6 rounded-xl max-w-4xl mx-auto">
+          <div class="flex flex-col md:flex-row gap-6">
+            <div class="flex-1">
+              <label class="block text-sm font-medium text-red-100 mb-2">Blood Group</label>
+              <div id="blood-group-buttons" class="flex flex-wrap gap-3 justify-center">
+                <button type="button" data-group="" class="blood-cell-btn active">All</button>
+                <button type="button" data-group="A+" class="blood-cell-btn">A+</button>
+                <button type="button" data-group="A-" class="blood-cell-btn">A-</button>
+                <button type="button" data-group="B+" class="blood-cell-btn">B+</button>
+                <button type="button" data-group="B-" class="blood-cell-btn">B-</button>
+                <button type="button" data-group="AB+" class="blood-cell-btn">AB+</button>
+                <button type="button" data-group="AB-" class="blood-cell-btn">AB-</button>
+                <button type="button" data-group="O+" class="blood-cell-btn">O+</button>
+                <button type="button" data-group="O-" class="blood-cell-btn">O-</button>
+              </div>
+            </div>
+            <div class="flex-1">
+              <label for="status-filter" class="block text-sm font-medium text-red-100 mb-2">Availability</label>
+              <select id="status-filter" class="w-full p-3 rounded-lg bg-white text-gray-800">
+                <option value="">Any</option>
+                <option value="Available">Available Now</option>
+                <option value="Unavailable">Unavailable</option>
+              </select>
+            </div>
+            <div class="flex items-end">
+              <button id="search-btn" class="w-full bg-white text-red-600 font-bold p-3 rounded-lg hover:bg-red-100">Search</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <main class="py-16">
+      <div class="container mx-auto px-6 grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div class="lg:col-span-3">
+          <h2 class="text-2xl font-bold text-gray-800 mb-8">Search Results</h2>
+          <div id="loading-indicator" class="text-center py-8"><p class="text-xl text-gray-500">Loading donors...</p></div>
+          <div id="donor-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 hidden"></div>
+          <div id="no-results" class="hidden text-center py-8"><p class="text-xl text-gray-500">No donors found.</p></div>
+        </div>
+        <aside class="lg:col-span-1">
+          <div class="bg-white rounded-xl shadow-lg p-6 sticky top-24">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Donor Statistics</h3>
+            <p class="text-gray-600 mb-2"><strong>Matching Donors:</strong> <span id="matching-count">0</span></p>
+            <p class="text-gray-600"><strong>Total Donors:</strong> <span id="total-count">0</span></p>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </template>
+  <template id="why-donate-template">
+    <section class="py-16">
+      <div class="container mx-auto px-6">
+        <div class="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-lg">
+          <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Why Donate Blood?</h1>
+          <div class="space-y-6 text-gray-700">
+            <div>
+              <h2 class="text-2xl font-semibold text-red-600 mb-3">Why Donate?</h2>
+              <ul class="list-disc list-inside space-y-2">
+                <li>Your donated blood can save a life, making a direct impact.</li>
+                <li>Regular donation reduces heart disease risk.</li>
+                <li>Donation includes a free health checkup, screening for diseases.</li>
+                <li>It boosts your immune system and overall health.</li>
+                <li>It’s a rewarding act of community contribution.</li>
+              </ul>
+            </div>
+            <div>
+              <h2 class="text-2xl font-semibold text-red-600 mb-3">Who Can Donate?</h2>
+              <ul class="list-disc list-inside space-y-2">
+                <li>Healthy individuals aged 18–60 years.</li>
+                <li>Minimum weight of 50 kg.</li>
+                <li>Free from major illnesses (e.g., hepatitis, HIV).</li>
+                <li>Not pregnant or menstruating (for women).</li>
+                <li>No recent surgeries or serious illnesses in the last 6 months.</li>
+              </ul>
+            </div>
+          </div>
+          <a href="YOUR_FORM_URL" target="_blank" class="mt-8 block text-center bg-red-600 text-white font-semibold px-5 py-3 rounded-lg hover:bg-red-700">Join as a Donor</a>
+        </div>
+      </div>
+    </section>
+  </template>
+  <template id="about-us-template">
+    <section class="py-16">
+      <div class="container mx-auto px-6 text-center">
+        <h1 class="text-3xl font-bold text-gray-800 mb-4">About BloodZone</h1>
+        <p class="text-gray-600 mb-12 max-w-2xl mx-auto">We are a dedicated team at bdvirtual, connecting blood donors with those in need to save lives.</p>
+      </div>
+    </section>
+  </template>
+
+  <!-- JavaScript -->
+  <script>
+    const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzcu53NZv5u9tcNfpiv2Cnh_EIm3AhToodEN9_IQvssuEYnL-VE6z9sufsXp5_o3Ij2hi2ou158C6F/pub?output=csv";
+    let allDonors = [];
+    let filteredDonors = [];
+    let selectedBloodGroup = "";
+
+    const appContent = document.getElementById("app-content");
+    const mobileMenuBtn = document.getElementById("mobile-menu-btn");
+    const mobileMenuContainer = document.getElementById("mobile-menu-container");
+    const mobileMenuBackdrop = document.getElementById("mobile-menu-backdrop");
+    const mobileMenu = document.getElementById("mobile-menu");
+    const contactModal = document.getElementById("contact-modal");
+    const closeContactBtn = document.getElementById("close-contact-btn");
+    const contactDetails = document.getElementById("contact-details");
+
+    function openModal(modal) {
+      modal.classList.remove("pointer-events-none", "opacity-0");
+      modal.querySelector(".modal-content").classList.remove("scale-95");
+    }
+
+    function closeModal(modal) {
+      modal.classList.add("opacity-0");
+      modal.querySelector(".modal-content").classList.add("scale-95");
+      setTimeout(() => modal.classList.add("pointer-events-none"), 300);
+    }
+
+    function toggleMobileMenu(show) {
+      mobileMenuContainer.classList.toggle("pointer-events-none", !show);
+      mobileMenuBackdrop.classList.toggle("opacity-0", !show);
+      mobileMenu.classList.toggle("translate-x-full", !show);
+    }
+
+    function parseCSVLine(line) {
+      const values = [];
+      let current = "";
+      let inQuotes = false;
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === "," && !inQuotes) {
+          values.push(current.trim());
+          current = "";
+        } else {
+          current += char;
+        }
+      }
+      values.push(current.trim());
+      return values.map(v => v.replace(/^"|"$/g, ""));
+    }
+
+    function csvToJson(csv) {
+      const lines = csv.split(/\r?\n/).filter(line => line.trim());
+      if (lines.length < 1) {
+        console.error("CSV is empty");
+        return [];
+      }
+      console.log("CSV Headers:", lines[0]);
+      const headers = parseCSVLine(lines[0]).map(h => h.trim());
+      const expectedHeaders = [
+        "Full Name",
+        "Gender",
+        "Blood Group",
+        "Phone Number",
+        "Emergency Contact Name & Number",
+        "Present Address (Area, Word, Thana, City/District)",
+        "Are you currently healthy and free from major illness?",
+        "Have you had any surgery or serious illness in the last 6 months?",
+        "Are you currently taking any medication? (If yes, please mention)"
+      ];
+      if (!headers.every((h, i) => h === expectedHeaders[i])) {
+        console.error("Header mismatch. Expected:", expectedHeaders, "Got:", headers);
+      }
+      const result = [];
+      const headerMapping = {
+        "Full Name": "Name",
+        "Gender": "Gender",
+        "Blood Group": "BloodGroup",
+        "Phone Number": "Phone",
+        "Emergency Contact Name & Number": "EmergencyContact",
+        "Present Address (Area, Word, Thana, City/District)": "Location",
+        "Are you currently healthy and free from major illness?": "HealthStatus",
+        "Have you had any surgery or serious illness in the last 6 months?": "RecentSurgery",
+        "Are you currently taking any medication? (If yes, please mention)": "OnMedication"
+      };
+      const requiredIndices = {};
+      headers.forEach((header, index) => {
+        for (const key in headerMapping) {
+          if (key.trim() === header) requiredIndices[headerMapping[key]] = index;
+        }
+      });
+      for (let i = 1; i < lines.length; i++) {
+        const values = parseCSVLine(lines[i]);
+        if (values.length < headers.length) {
+          console.warn(`Skipping malformed line ${i}:`, lines[i]);
+          continue;
+        }
+        const donor = {
+          Name: values[requiredIndices.Name] || "",
+          Gender: values[requiredIndices.Gender] || "",
+          BloodGroup: values[requiredIndices.BloodGroup] || "",
+          Phone: values[requiredIndices.Phone] || "",
+          EmergencyContact: values[requiredIndices.EmergencyContact] || "",
+          Location: values[requiredIndices.Location] || "",
+          Status: values[requiredIndices.HealthStatus] === "Yes" ? "Available" : "Unavailable",
+          RecentSurgery: values[requiredIndices.RecentSurgery] || "",
+          OnMedication: values[requiredIndices.OnMedication] || ""
+        };
+        if (donor.Name && donor.BloodGroup) result.push(donor);
+      }
+      console.log("Parsed Donors:", result);
+      return result;
+    }
+
+    function createDonorCard(donor) {
+      const card = document.createElement("div");
+      card.className = "bg-white rounded-xl shadow-lg p-6 transform hover:-translate-y-2 transition-transform";
+      card.innerHTML = `
+        <div class="flex items-center space-x-4 mb-4">
+          <div class="w-12 h-12 bg-red-100 text-red-600 flex items-center justify-center font-bold rounded-full">${donor.BloodGroup || "?"}</div>
+          <h3 class="text-lg font-bold text-gray-800">${donor.Name || "Anonymous"}</h3>
+        </div>
+        <p class="text-gray-600"><strong>Gender:</strong> ${donor.Gender || "-"}</p>
+        <p class="text-gray-600"><strong>Location:</strong> ${donor.Location || "-"}</p>
+        <p class="mt-2 font-semibold ${donor.Status === "Available" ? "text-green-600" : "text-red-600"}">${donor.Status}</p>
+        <button class="contact-donor-btn mt-4 w-full bg-red-600 text-white font-semibold py-2 rounded-lg hover:bg-red-700" 
+                data-donor-name="${donor.Name}" 
+                data-donor-phone="${donor.Phone}" 
+                data-donor-emergency-contact="${donor.EmergencyContact}" 
+                data-donor-recent-surgery="${donor.RecentSurgery}" 
+                data-donor-on-medication="${donor.OnMedication}">
+          Contact Donor
+        </button>
+      `;
+      return card;
+    }
+
+    function renderBloodGroupStats(stats) {
+      const statsContainer = document.getElementById("blood-group-stats");
+      if (!statsContainer) return;
+      statsContainer.innerHTML = "";
+      for (const group of ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]) {
+        const statEl = document.createElement("div");
+        statEl.className = "bg-white/20 p-2 rounded-lg";
+        statEl.innerHTML = `<div class="text-xl font-bold">${stats[group] || 0}</div><div class="text-xs font-medium">${group}</div>`;
+        statsContainer.appendChild(statEl);
+      }
+    }
+
+    function renderDonors() {
+      const donorGrid = document.getElementById("donor-grid");
+      const loading = document.getElementById("loading-indicator");
+      const noResults = document.getElementById("no-results");
+      const matchingCount = document.getElementById("matching-count");
+      const totalCount = document.getElementById("total-count");
+
+      donorGrid.innerHTML = "";
+      loading.classList.add("hidden");
+
+      matchingCount.textContent = filteredDonors.length;
+      totalCount.textContent = allDonors.length;
+
+      if (filteredDonors.length === 0) {
+        noResults.classList.remove("hidden");
+        donorGrid.classList.add("hidden");
+        return;
+      }
+      noResults.classList.add("hidden");
+      donorGrid.classList.remove("hidden");
+      filteredDonors.forEach(d => donorGrid.appendChild(createDonorCard(d)));
+    }
+
+    function filterDonors() {
+      filteredDonors = allDonors.filter(donor => {
+        const bloodGroupMatch = !selectedBloodGroup || donor.BloodGroup === selectedBloodGroup;
+        const statusMatch = !document.getElementById("status-filter").value || donor.Status === document.getElementById("status-filter").value;
+        return bloodGroupMatch && statusMatch;
+      });
+      renderDonors();
+    }
+
+    async function fetchDonors() {
+      document.getElementById("loading-indicator").classList.remove("hidden");
+      try {
+        const res = await fetch(GOOGLE_SHEET_URL + "&t=" + new Date().getTime());
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        const text = await res.text();
+        console.log("Raw CSV:", text);
+        allDonors = csvToJson(text);
+        filteredDonors = allDonors;
+        const stats = allDonors.reduce((acc, donor) => {
+          if (donor.BloodGroup) acc[donor.BloodGroup] = (acc[donor.BloodGroup] || 0) + 1;
+          return acc;
+        }, {});
+        renderBloodGroupStats(stats);
+        filterDonors();
+      } catch (err) {
+        console.error("Error fetching donors:", err);
+        document.getElementById("loading-indicator").innerHTML = "<p class='text-red-500'>Failed to load donor data. Please try again later.</p>";
+      }
+    }
+
+    function handleRouteChange() {
+      const hash = window.location.hash || "#find-donors";
+      const pageId = hash.substring(1);
+      const template = document.getElementById(`${pageId}-template`);
+      appContent.innerHTML = "";
+      if (template) {
+        appContent.appendChild(template.content.cloneNode(true));
+        document.querySelectorAll(".nav-link").forEach(link => link.classList.toggle("active", link.getAttribute("href") === hash));
+        document.querySelectorAll(".mobile-nav-link").forEach(link => link.classList.toggle("active", link.getAttribute("href") === hash));
+        if (pageId === "find-donors") {
+          fetchDonors();
+          document.getElementById("search-btn").addEventListener("click", filterDonors);
+          document.getElementById("status-filter").addEventListener("change", filterDonors);
+          document.getElementById("blood-group-buttons").addEventListener("click", (e) => {
+            if (e.target.matches(".blood-cell-btn")) {
+              document.querySelectorAll(".blood-cell-btn").forEach(btn => btn.classList.remove("active"));
+              e.target.classList.add("active");
+              selectedBloodGroup = e.target.dataset.group;
+              filterDonors();
+            }
+          });
+          document.getElementById("donor-grid").addEventListener("click", (e) => {
+            const contactBtn = e.target.closest(".contact-donor-btn");
+            if (contactBtn) {
+              const medicalHistory = (contactBtn.dataset.donorRecentSurgery === "Yes" || (contactBtn.dataset.donorOnMedication && contactBtn.dataset.donorOnMedication.toLowerCase() !== "no")) ? "Positive" : "Negative";
+              contactDetails.innerHTML = `
+                <p><strong>Name:</strong> ${contactBtn.dataset.donorName}</p>
+                <p><strong>Phone:</strong> ${contactBtn.dataset.donorPhone}</p>
+                <p><strong>Emergency:</strong> ${contactBtn.dataset.donorEmergencyContact || "N/A"}</p>
+                <p><strong>Medical History:</strong> ${medicalHistory}</p>
+              `;
+              openModal(contactModal);
+            }
+          });
+        }
+      }
+      toggleMobileMenu(false);
+    }
+
+    mobileMenuBtn.addEventListener("click", () => toggleMobileMenu(true));
+    mobileMenuBackdrop.addEventListener("click", () => toggleMobileMenu(false));
+    closeContactBtn.addEventListener("click", () => closeModal(contactModal));
+    document.body.addEventListener("click", (e) => {
+      if (e.target.matches(".router-link")) {
+        e.preventDefault();
+        window.location.hash = e.target.getAttribute("href");
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("year").textContent = new Date().getFullYear();
+      handleRouteChange();
+      window.addEventListener("hashchange", handleRouteChange);
+    });
+  </script>
+</body>
+</html>
