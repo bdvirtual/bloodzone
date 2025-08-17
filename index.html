@@ -1,178 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BloodZone - Find a Donor</title>
   <meta name="description" content="BloodZone - Connect with blood donors to save lives.">
   <meta name="keywords" content="blood donation, blood bank, find donors">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23DC2626' d='M50 5 C25 20 25 50 50 95 C75 50 75 20 50 5 Z'/%3E%3Cpath fill='%234CAF50' d='M45 35 H55 V25 H45 V35 M35 45 H45 V55 H35 V45 M55 45 H65 V55 H55 V45 M45 55 H55 V65 H45 V55'/%3E%3C/svg%3E" type="image/svg+xml">
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Inter', sans-serif; }
-    .heartbeat-bg {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M0 50 L20 50 L25 40 L35 60 L45 30 L55 70 L65 45 L75 55 L80 50 L100 50' fill='none' stroke='rgba(255,255,255,0.2)' stroke-width='3'/%3E%3C/svg%3E");
-      background-repeat: repeat-x;
-      background-position: center;
-      animation: heartbeat 8s linear infinite;
-    }
-    @keyframes heartbeat { 0% { background-position-x: 0; } 100% { background-position-x: -200px; } }
-    .modal-backdrop, .mobile-menu-backdrop { transition: opacity 0.3s ease-in-out; }
-    .modal-content, #mobile-menu { transition: transform 0.3s ease-in-out; }
-    .nav-link.active { color: #DC2626; border-bottom: 2px solid #DC2626; padding-bottom: 0.25rem; }
-    .mobile-nav-link.active { background-color: #FEE2E2; color: #DC2626; }
     .blood-cell-btn {
       width: 48px; height: 48px; border-radius: 50%;
       background-color: rgba(255, 255, 255, 0.8); color: #DC2626;
       font-weight: 700; display: flex; align-items: center; justify-content: center;
       border: 2px solid transparent; transition: all 0.2s ease-in-out; cursor: pointer;
     }
+    .blood-cell-btn.active { background-color: white; border-color: #DC2626; box-shadow: 0 0 0 3px rgba(220,38,38,0.3); }
     .blood-cell-btn:hover { background-color: white; transform: scale(1.05); }
-    .blood-cell-btn.active {
-      background-color: white; border-color: #DC2626;
-      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.3);
-    }
-    .pagination-btn { min-width: 40px; height: 40px; padding: 0 0.5rem; }
-    .pagination-btn.active { background-color: #DC2626; color: white; border-color: #DC2626; }
-    .pagination-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .team-avatar-container {
-      width: 120px; height: 120px; border-radius: 50%; overflow: hidden;
-      border: 4px solid white; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-    .team-avatar { width: 100%; height: 100%; object-fit: cover; }
   </style>
 </head>
 <body class="bg-gray-50">
+
   <!-- Header -->
   <header class="bg-white shadow-md sticky top-0 z-50">
     <div class="container mx-auto px-6 py-3 flex justify-between items-center">
-      <div class="flex items-center space-x-4">
-        <a href="https://github.com/bdvirtual/bloodzone" target="_blank">
-          <img src="assets/logo.png" alt="BloodZone Logo" class="h-12 w-12 rounded-full object-cover">
-        </a>
-        <div>
-          <a href="https://github.com/bdvirtual/bloodzone" target="_blank" class="text-xl font-bold text-red-600 router-link">BloodZone</a>
-        </div>
-      </div>
-      <nav id="main-nav" class="hidden md:flex space-x-8">
-        <a href="#find-donors" class="nav-link text-gray-700 hover:text-red-600 font-medium router-link active">Find Donors</a>
-        <a href="#why-donate" class="nav-link text-gray-500 hover:text-red-600 font-medium router-link">Why Donate?</a>
-        <a href="#about-us" class="nav-link text-gray-500 hover:text-red-600 font-medium router-link">About Us</a>
-      </nav>
-      <div class="hidden md:block">
-        <a id="register-link-desktop" 
-           href="https://docs.google.com/forms/d/e/1FAIpQLSe2WB1FkMeNVb_OYFr5l3Vz4-fI4f-9bQWzJiihm34hAaJYIw/viewform"
-           target="_blank"
-           class="bg-red-600 text-white font-semibold px-5 py-2 rounded-lg hover:bg-red-700 transition duration-300">
-          Register Now
-        </a>
-      </div>
-      <div class="md:hidden">
-        <button id="mobile-menu-btn" class="text-gray-600 hover:text-red-600 focus:outline-none">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <!-- Mobile Menu -->
-  <div id="mobile-menu-container" class="fixed inset-0 z-40 pointer-events-none">
-    <div id="mobile-menu-backdrop" class="mobile-menu-backdrop absolute inset-0 bg-black bg-opacity-50 opacity-0"></div>
-    <div id="mobile-menu" class="absolute top-0 right-0 h-full w-64 bg-white shadow-xl p-6 transform translate-x-full">
-      <nav class="flex flex-col space-y-4 mt-8">
-        <a href="#find-donors" class="mobile-nav-link text-gray-700 hover:bg-gray-100 font-medium router-link p-3 rounded-lg">Find Donors</a>
-        <a href="#why-donate" class="mobile-nav-link text-gray-700 hover:bg-gray-100 font-medium router-link p-3 rounded-lg">Why Donate?</a>
-        <a href="#about-us" class="mobile-nav-link text-gray-700 hover:bg-gray-100 font-medium router-link p-3 rounded-lg">About Us</a>
-      </nav>
-      <a id="register-link-mobile" 
-         href="https://docs.google.com/forms/d/e/1FAIpQLSe2WB1FkMeNVb_OYFr5l3Vz4-fI4f-9bQWzJiihm34hAaJYIw/viewform" 
-         target="_blank"
-         class="mt-8 w-full block text-center bg-red-600 text-white font-semibold px-5 py-3 rounded-lg hover:bg-red-700 transition duration-300">
+      <h1 class="text-xl font-bold text-red-600">BloodZone</h1>
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSe2WB1FkMeNVb_OYFr5l3Vz4-fI4f-9bQWzJiihm34hAaJYIw/viewform" target="_blank" class="bg-red-600 text-white font-semibold px-5 py-2 rounded-lg hover:bg-red-700">
         Register Now
       </a>
     </div>
-  </div>
+  </header>
 
-  <!-- Content -->
-  <div id="app-content"></div>
+  <!-- Find Donors Section -->
+  <section class="bg-red-600 text-white py-16">
+    <div class="container mx-auto px-6 text-center">
+      <h1 class="text-4xl font-bold mb-4">Find a Lifesaver Near You</h1>
+      <blockquote class="text-lg text-red-100 italic mb-8 max-w-3xl mx-auto">
+        "And whoever saves one – it is as if he had saved mankind entirely." (5:32)
+      </blockquote>
+
+      <!-- Filters -->
+      <div class="bg-white/10 backdrop-blur-sm p-6 rounded-xl max-w-4xl mx-auto">
+        <div class="flex flex-wrap gap-3 justify-center mb-6" id="blood-group-buttons">
+          <button type="button" data-group="" class="blood-cell-btn active">All</button>
+          <button type="button" data-group="A+" class="blood-cell-btn">A+</button>
+          <button type="button" data-group="A-" class="blood-cell-btn">A-</button>
+          <button type="button" data-group="B+" class="blood-cell-btn">B+</button>
+          <button type="button" data-group="B-" class="blood-cell-btn">B-</button>
+          <button type="button" data-group="AB+" class="blood-cell-btn">AB+</button>
+          <button type="button" data-group="AB-" class="blood-cell-btn">AB-</button>
+          <button type="button" data-group="O+" class="blood-cell-btn">O+</button>
+          <button type="button" data-group="O-" class="blood-cell-btn">O-</button>
+        </div>
+        <button id="search-btn" class="w-full bg-white text-red-600 font-bold p-3 rounded-lg hover:bg-red-100">Search</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Results -->
+  <main class="py-16">
+    <div class="container mx-auto px-6">
+      <h2 class="text-2xl font-bold text-gray-800 mb-8">Search Results</h2>
+      <div id="loading-indicator" class="text-center py-8"><p class="text-xl text-gray-500">Loading donors...</p></div>
+      <div id="donor-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 hidden"></div>
+      <div id="no-results" class="hidden text-center py-8"><p class="text-xl text-gray-500">No donors found.</p></div>
+    </div>
+  </main>
 
   <!-- Footer -->
-  <footer class="bg-gray-800 text-white py-8">
-    <div class="container mx-auto px-6 text-center text-sm">
-      <p>Developed by <a href="https://github.com/bdvirtual" target="_blank" class="underline hover:text-red-300">bdvirtual</a></p>
-      <p class="mt-2">&copy; <span id="year"></span> BloodZone. Saving lives, one drop at a time.</p>
-    </div>
+  <footer class="bg-gray-800 text-white py-8 text-center">
+    <p>&copy; <span id="year"></span> BloodZone. Saving lives, one drop at a time.</p>
   </footer>
 
-  <!-- Contact Modal -->
-  <div id="contact-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 modal-backdrop opacity-0 pointer-events-none"
-       role="dialog" aria-modal="true" aria-labelledby="contact-details">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm p-8 text-center modal-content transform scale-95">
-      <h2 class="text-2xl font-bold text-gray-800 mb-2">Contact Information</h2>
-      <p class="text-gray-500 mb-6">For donor privacy, direct contact is managed by BloodZone.</p>
-      <div id="contact-details" class="text-left bg-gray-50 p-4 rounded-lg space-y-2"></div>
-      <button id="close-contact-btn" class="mt-6 w-full bg-red-600 text-white font-semibold py-2 rounded-lg hover:bg-red-700">Close</button>
+<script>
+const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzcu53NZv5u9tcNfpiv2Cnh_EIm3AhToodEN9_IQvssuEYnL-VE6z9sufsXp5_o3Ij2hi2ou158C6F/pub?output=csv";
+
+let allDonors = [], filteredDonors = [], selectedBloodGroup = "";
+
+function csvToJson(csv) {
+  const lines = csv.split(/\r?\n/);
+  if (lines.length < 2) return [];
+  const headers = lines[0].split(",").map(h => h.trim().replace(/"/g,""));
+  const headerMapping = {
+    "Full Name": "Name",
+    "Gender": "Gender",
+    "Blood Group": "BloodGroup",
+    "Phone Number": "Phone",
+    "Emergency Contact Name & Number": "EmergencyContact",
+    "Present Address (Area, Word, Thana, City/District)": "Location",
+    "Are you currently healthy and free from major illness?": "HealthStatus",
+    "Have you had any surgery or serious illness in the last 6 months?": "RecentSurgery",
+    "Are you currently taking any medication? (If yes, please mention)": "OnMedication"
+  };
+  const indices = {};
+  headers.forEach((h,i)=>{ if(headerMapping[h]) indices[headerMapping[h]] = i; });
+  const result = [];
+  for (let i=1;i<lines.length;i++){
+    if(!lines[i]) continue;
+    const values = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v=>v.trim().replace(/"/g,""));
+    const donor = {
+      Name: values[indices.Name],
+      Gender: values[indices.Gender],
+      BloodGroup: values[indices.BloodGroup],
+      Phone: values[indices.Phone],
+      EmergencyContact: values[indices.EmergencyContact],
+      Location: values[indices.Location],
+      Status: values[indices.HealthStatus]==="Yes" ? "Available" : "Unavailable",
+      RecentSurgery: values[indices.RecentSurgery],
+      OnMedication: values[indices.OnMedication]
+    };
+    if(donor.Name) result.push(donor);
+  }
+  return result;
+}
+
+function createDonorCard(donor){
+  const div = document.createElement("div");
+  div.className="bg-white rounded-xl shadow-lg p-6";
+  div.innerHTML=`
+    <div class="flex items-center space-x-4 mb-4">
+      <div class="flex-shrink-0 w-16 h-16 bg-red-100 text-red-600 text-2xl font-bold rounded-full flex items-center justify-center">${donor.BloodGroup}</div>
+      <div><h3 class="text-lg font-bold text-gray-800">${donor.Name}</h3></div>
     </div>
-  </div>
+    <p class="text-gray-600"><strong>Gender:</strong> ${donor.Gender}</p>
+    <p class="text-gray-600"><strong>Phone:</strong> ${donor.Phone}</p>
+    <p class="text-gray-600"><strong>Location:</strong> ${donor.Location}</p>
+  `;
+  return div;
+}
 
-  <!-- Page Templates -->
-  <template id="find-donors-template">
-    <!-- keep your existing donor finder code here -->
-  </template>
+function renderDonors(){
+  const donorGrid=document.getElementById("donor-grid");
+  const loading=document.getElementById("loading-indicator");
+  const noResults=document.getElementById("no-results");
+  donorGrid.innerHTML="";
+  loading.classList.add("hidden");
+  if(filteredDonors.length===0){ noResults.classList.remove("hidden"); donorGrid.classList.add("hidden"); return; }
+  noResults.classList.add("hidden"); donorGrid.classList.remove("hidden");
+  filteredDonors.forEach(d=> donorGrid.appendChild(createDonorCard(d)));
+}
 
-  <template id="why-donate-template">
-    <!-- keep your why donate code here -->
-  </template>
+function filterDonors(){
+  filteredDonors = allDonors.filter(d => !selectedBloodGroup || d.BloodGroup===selectedBloodGroup);
+  renderDonors();
+}
 
-  <template id="about-us-template">
-    <!-- keep your about us code here -->
-  </template>
+async function fetchDonors(){
+  try {
+    const res=await fetch(GOOGLE_SHEET_URL);
+    const text=await res.text();
+    allDonors=csvToJson(text);
+    filterDonors();
+  } catch(e){
+    console.error("Error fetching donors",e);
+  }
+}
 
-  <script>
-    const appContent = document.getElementById('app-content');
-    const mainNav = document.getElementById('main-nav');
-    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-    const mobileMenuContainer = document.getElementById('mobile-menu-container');
-    const mobileMenu = document.getElementById('mobile-menu');
-    const mobileMenuBackdrop = document.getElementById('mobile-menu-backdrop');
+document.getElementById("blood-group-buttons").addEventListener("click",e=>{
+  if(e.target.matches(".blood-cell-btn")){
+    document.querySelectorAll(".blood-cell-btn").forEach(b=>b.classList.remove("active"));
+    e.target.classList.add("active");
+    selectedBloodGroup=e.target.dataset.group;
+  }
+});
 
-    function toggleMobileMenu(show) {
-      mobileMenuContainer.classList.toggle('pointer-events-none', !show);
-      mobileMenuBackdrop.classList.toggle('opacity-0', !show);
-      mobileMenu.classList.toggle('translate-x-full', !show);
-      document.body.style.overflow = show ? 'hidden' : '';
-    }
+document.getElementById("search-btn").addEventListener("click",filterDonors);
 
-    function handleRouteChange() {
-      const hash = window.location.hash || '#find-donors';
-      const pageId = hash.substring(1);
-      const template = document.getElementById(`${pageId}-template`);
-      appContent.innerHTML = '';
-      if (template) {
-        appContent.appendChild(template.content.cloneNode(true));
-      } else {
-        appContent.appendChild(document.getElementById('find-donors-template').content.cloneNode(true));
-      }
-      mainNav.querySelectorAll('.nav-link').forEach(link => link.classList.toggle('active', link.getAttribute('href') === hash));
-      mobileMenu.querySelectorAll('.mobile-nav-link').forEach(link => link.classList.toggle('active', link.getAttribute('href') === hash));
-      toggleMobileMenu(false);
-    }
+document.addEventListener("DOMContentLoaded",()=>{
+  document.getElementById("year").textContent=new Date().getFullYear();
+  fetchDonors();
+});
+</script>
 
-    mobileMenuBtn.addEventListener('click', () => toggleMobileMenu(true));
-    mobileMenuBackdrop.addEventListener('click', () => toggleMobileMenu(false));
-    window.addEventListener('hashchange', handleRouteChange);
-    document.body.addEventListener('click', (e) => {
-      if (e.target.matches('.router-link')) {
-        e.preventDefault();
-        window.location.hash = e.target.getAttribute('href');
-      }
-    });
-
-    document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('year').textContent = new Date().getFullYear();
-      handleRouteChange();
-    });
-  </script>
 </body>
 </html>
