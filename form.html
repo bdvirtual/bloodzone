@@ -1,179 +1,304 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>BloodZone Donor Registration</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    :root { --brand:#d32f2f; --brand-dark:#b71c1c; }
-    body { font-family: Arial, Helvetica, sans-serif; background:#fce4ec; margin:0; }
-    .wrap { max-width:700px; margin:40px auto; background:#fff; padding:28px; border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,.08); }
-    h1 { margin:0 0 10px; color:var(--brand); text-align:center; }
-    p.sub { margin:0 0 24px; text-align:center; color:#555; }
-    .form-group { margin:14px 0 18px; }
-    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-    label { display:block; font-weight:700; margin-bottom:6px; color:#333; }
-    input[type="text"], input[type="tel"], select, textarea {
-      width:100%; padding:12px 12px;
-      border:1px solid #d9d9d9; border-radius:8px; font-size:15px; outline:none;
-      transition:border-color .15s ease;
-    }
-    textarea { min-height:90px; resize:vertical; }
-    input:focus, select:focus, textarea:focus { border-color:var(--brand); }
-    .hint { font-size:12px; color:#777; margin-top:6px; }
-    .actions { margin-top:6px; display:grid; gap:10px; }
-    .btn-primary {
-      appearance:none; border:0; border-radius:10px; padding:12px 16px;
-      background:var(--brand); color:#fff; font-weight:700; font-size:16px; cursor:pointer;
-    }
-    .btn-primary:hover { background:var(--brand-dark); }
-    /* Plain link-style "Back to Home" with NO hover background */
-    .btn-link {
-      display:inline-block; background:none; border:none; padding:0;
-      color:var(--brand); text-decoration:underline; font-size:15px; cursor:pointer;
-    }
-    .btn-link:hover { color:var(--brand-dark); background:none; }
-    .thankyou {
-      display:none; margin-top:18px; padding:16px; border-radius:10px;
-      background:#e8f5e9; border:2px solid #4caf50; color:#2e7d32; text-align:center; font-weight:700;
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>BloodZone • Donor Registration</title>
+<style>
+  :root{
+    --brand:#d32f2f;
+    --ink:#222;
+    --muted:#6b7280;
+    --bg:#fafafa;
+    --card:#ffffff;
+    --ring:#e5e7eb;
+    --ok:#16a34a;
+    --focus:#9b1c1c33;
+    --radius:14px;
+    --pad:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font:500 14px/1.5 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+    color:var(--ink);
+    background:
+      radial-gradient(1000px 600px at 100% -10%, #fff, transparent),
+      radial-gradient(800px 500px at -10% 110%, #fff, transparent),
+      var(--bg);
+  }
+
+  /* Header */
+  .wrap{max-width:920px;margin:auto;padding:24px}
+  .head{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:12px;margin-bottom:18px;
+  }
+  .brand{
+    display:flex;align-items:center;gap:10px;
+    font-weight:800;letter-spacing:.3px;color:var(--brand);
+  }
+  .brand-badge{
+    width:28px;height:28px;border:2px solid var(--brand);border-radius:9px;
+    display:grid;place-items:center;font-size:14px;font-weight:900;color:var(--brand);
+  }
+  .back-link{
+    appearance:none;border:none;background:none;padding:0;margin:0;
+    color:var(--muted);font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:8px;
+  }
+  .back-link:hover,.back-link:focus{text-decoration:underline;background-color:transparent;outline:none}
+  .back-link svg{width:18px;height:18px}
+
+  /* Card */
+  .card{
+    background:var(--card);
+    border:1px solid var(--ring);
+    border-radius:var(--radius);
+    box-shadow:0 10px 30px rgba(0,0,0,.04);
+    overflow:hidden;
+  }
+  .hero{
+    padding:22px var(--pad);
+    background:linear-gradient(180deg,#fff, #fff7f7);
+    border-bottom:1px solid var(--ring);
+  }
+  .hero h1{
+    margin:0 0 6px;font-size:20px;line-height:1.2;color:var(--brand);
+    letter-spacing:.2px;
+  }
+  .hero p{margin:0;color:var(--muted);font-weight:500}
+
+  /* Form */
+  form{padding:18px var(--pad) 8px}
+  .grid{
+    display:grid;gap:12px;
+    grid-template-columns:1fr;
+  }
+  @media (min-width:720px){
+    .grid{grid-template-columns:repeat(2,1fr)}
+    .span-2{grid-column:1/-1}
+  }
+
+  .field{
+    display:flex;flex-direction:column;gap:6px;
+    position:relative;
+  }
+  .label{
+    font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.2px;
+  }
+  input[type="text"], input[type="tel"], select, .radio-wrap{
+    width:100%;border:1px solid var(--ring);background:#fff;border-radius:10px;
+    padding:10px 12px;font:500 14px/1.35 inherit;color:var(--ink);
+    outline:none;transition:box-shadow .15s, border-color .15s, transform .08s;
+  }
+  select{padding-right:34px}
+  input:focus, select:focus{box-shadow:0 0 0 4px var(--focus);border-color:#f1b5b5}
+  .hint{font-size:11px;color:var(--muted)}
+
+  /* Radio (Yes/No) */
+  .radios{display:flex;gap:10px;flex-wrap:wrap}
+  .radio{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:9px 12px;border:1px solid var(--ring);border-radius:999px;
+    cursor:pointer;user-select:none;
+  }
+  .radio input{appearance:none;margin:0;width:14px;height:14px;border:1.5px solid var(--brand);border-radius:50%}
+  .radio input:checked{box-shadow:inset 0 0 0 3px var(--brand)}
+  .radio:hover{border-color:#f0c3c3}
+
+  /* Footer actions */
+  .actions{
+    display:flex;align-items:center;gap:10px;justify-content:flex-end;
+    padding:10px var(--pad) 16px;border-top:1px dashed var(--ring);
+  }
+  .btn{
+    appearance:none;border:1px solid var(--brand);background:none;color:var(--brand);
+    font-weight:800;padding:10px 14px;border-radius:999px;cursor:pointer;
+    transition:transform .08s, box-shadow .15s, border-color .15s;
+  }
+  .btn:hover{transform:translateY(-1px)}
+  .btn:active{transform:translateY(0)}
+  .btn.secondary{border-color:#bbb;color:#555}
+  .btn.secondary:hover{border-color:#9ca3af}
+  /* No background color on hover for any button */
+  .btn:hover{background-color:transparent}
+
+  /* Success */
+  .success{
+    display:none; padding:26px; text-align:center;
+    background:#f0fdf4;border-top:1px solid #dcfce7;color:#065f46;
+  }
+  .success.show{display:block}
+  .success .check{font-size:34px;line-height:1;margin-bottom:6px}
+  .fade-out{animation:fade .25s ease forwards}
+  @keyframes fade{to{opacity:.0;pointer-events:none}}
+
+  /* Tiny footer */
+  .tiny{margin:14px auto 28px;text-align:center;color:#9ca3af;font-size:11px}
+</style>
 </head>
 <body>
   <div class="wrap">
-    <h1>BloodZone Donor Registration</h1>
-    <p class="sub">Please fill in your details accurately. Fields marked * are required.</p>
+    <div class="head">
+      <a class="back-link" href="/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M15 18l-6-6 6-6"/></svg> Back to Home</a>
+      <div class="brand"><span class="brand-badge">BZ</span> BloodZone</div>
+    </div>
 
-    <!-- Hidden iframe to bypass cross-origin redirects -->
-    <iframe name="hidden_iframe" style="display:none;"></iframe>
-
-    <!-- IMPORTANT: Uses your real Google Form action and entry IDs -->
-    <form id="donorForm"
-      action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSe2WB1FkMeNVb_OYFr5l3Vz4-fI4f-9bQWzJiihm34hAaJYIw/formResponse"
-      method="POST"
-      target="hidden_iframe">
-
-      <!-- Full Name *  entry.1876433206 -->
-      <div class="form-group">
-        <label for="fullName">Full Name *</label>
-        <input id="fullName" name="entry.1876433206" type="text" required />
+    <div class="card" id="card">
+      <div class="hero">
+        <h1>Donor Registration</h1>
+        <p>Compact, clean and quick — your info helps save lives.</p>
       </div>
 
-      <!-- Two-column row -->
-      <div class="form-row">
-        <!-- Gender *  entry.438778170  (values must match form options EXACTLY) -->
-        <div class="form-group">
-          <label for="gender">Gender *</label>
-          <select id="gender" name="entry.438778170" required>
-            <option value="" selected disabled>Choose</option>
-            <option>Male</option>
-            <option>Female</option>
-          </select>
+      <form id="donorForm"
+        action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSe2WB1FkMeNVb_OYFr5l3Vz4-fI4f-9bQWzJiihm34hAaJYIw/formResponse"
+        method="POST" target="hidden_iframe">
+
+        <div class="grid">
+          <!-- Full Name -->
+          <div class="field span-2">
+            <label class="label" for="fullName">Full Name *</label>
+            <input id="fullName" name="entry.1876433206" type="text" required placeholder="e.g., Mahfuzur Rahman" />
+          </div>
+
+          <!-- Gender -->
+          <div class="field">
+            <label class="label" for="gender">Gender *</label>
+            <select id="gender" name="entry.438778170" required>
+              <option value="">Choose…</option>
+              <option>Male</option>
+              <option>Female</option>
+            </select>
+          </div>
+
+          <!-- Blood Group -->
+          <div class="field">
+            <label class="label" for="blood">Blood Group *</label>
+            <select id="blood" name="entry.1494571153" required>
+              <option value="">Choose…</option>
+              <option>A+</option><option>A-</option>
+              <option>B+</option><option>B-</option>
+              <option>AB+</option><option>AB-</option>
+              <option>O+</option><option>O-</option>
+            </select>
+          </div>
+
+          <!-- Phone -->
+          <div class="field">
+            <label class="label" for="phone">Phone Number *</label>
+            <input id="phone" name="entry.1183927202" type="tel" required
+                   placeholder="01XXXXXXXXX" pattern="01[3-9][0-9]{8}" />
+            <div class="hint">BD format: 01XXXXXXXXX</div>
+          </div>
+
+          <!-- Emergency Contact -->
+          <div class="field">
+            <label class="label" for="emergency">Emergency Contact (Name & Number)</label>
+            <input id="emergency" name="entry.354393440" type="text" placeholder="e.g., Abir—01710xxxxxx" />
+          </div>
+
+          <!-- Address -->
+          <div class="field span-2">
+            <label class="label" for="address">Present Address *</label>
+            <input id="address" name="entry.1717042316" type="text" required
+                   placeholder="Area, Ward, Thana, City/District" />
+          </div>
+
+          <!-- Health Yes/No -->
+<div class="field span-2">
+  <span class="label">Currently healthy, free from major illness? *</span>
+  <div class="radios">
+    <label class="radio"><input type="radio" name="entry.448583945" value="Yes" required />Yes</label>
+    <label class="radio"><input type="radio" name="entry.448583945" value="No" />No</label>
+  </div>
+</div>
+
+<!-- Surgery Yes/No -->
+<div class="field span-2">
+  <span class="label">Surgery/serious illness in last 6 months? *</span>
+  <div class="radios">
+    <label class="radio"><input type="radio" name="entry.112065081" value="Yes" required />Yes</label>
+    <label class="radio"><input type="radio" name="entry.112065081" value="No" />No</label>
+  </div>
+</div>
+
+<!-- Medication Yes/No -->
+<div class="field span-2">
+  <span class="label">Taking any medication? (If yes, please mention) *</span>
+  <div class="radios">
+    <label class="radio"><input type="radio" name="entry.2039522098" value="Yes" required />Yes</label>
+    <label class="radio"><input type="radio" name="entry.2039522098" value="No" />No</label>
+  </div>
+</div>
+          </div>
         </div>
 
-        <!-- Blood Group  entry.1494571153 -->
-        <div class="form-group">
-          <label for="blood">Blood Group</label>
-          <select id="blood" name="entry.1494571153">
-            <option value="" selected disabled>Choose</option>
-            <option>A+</option><option>A-</option>
-            <option>B+</option><option>B-</option>
-            <option>AB+</option><option>AB-</option>
-            <option>O+</option><option>O-</option>
-          </select>
+        <!-- Google needs these to avoid redirect issues sometimes; harmless if ignored -->
+        <input type="hidden" name="fvv" value="1">
+        <input type="hidden" name="fbzx" value="8212305990156201007">
+
+        <div class="actions">
+          <button class="btn secondary" type="reset">Clear</button>
+          <button class="btn" type="submit">Submit</button>
         </div>
+      </form>
+
+      <div id="success" class="success">
+        <div class="check">✅</div>
+        <strong>Thanks! Your donor information has been submitted.</strong>
+        <div class="tiny">You can close this page or go back home.</div>
       </div>
+    </div>
 
-      <!-- Phone Number  entry.1183927202 -->
-      <div class="form-group">
-        <label for="phone">Phone Number</label>
-        <input id="phone" name="entry.1183927202" type="tel" inputmode="tel" />
-      </div>
-
-      <!-- Emergency Contact  entry.354393440 -->
-      <div class="form-group">
-        <label for="emergency">Emergency Contact Name & Number</label>
-        <input id="emergency" name="entry.354393440" type="text" />
-        <div class="hint">Example: John Doe — 01XXXXXXXXX</div>
-      </div>
-
-      <!-- Address  entry.1717042316 -->
-      <div class="form-group">
-        <label for="address">Present Address (Area, Word, Thana, City/District)</label>
-        <textarea id="address" name="entry.1717042316"></textarea>
-      </div>
-
-      <!-- Health questions: Google uses checkbox-like UI, but it's single-choice.
-           Send one value that matches the option text ("Yes" or "No"). -->
-      <div class="form-row">
-        <!-- Healthy?  entry.448583945 -->
-        <div class="form-group">
-          <label for="healthy">Currently healthy and free from major illness?</label>
-          <select id="healthy" name="entry.448583945">
-            <option value="" selected disabled>Choose</option>
-            <option>Yes</option>
-            <option>No</option>
-          </select>
-        </div>
-
-        <!-- Surgery last 6 months?  entry.112065081 -->
-        <div class="form-group">
-          <label for="surgery">Surgery/serious illness in last 6 months?</label>
-          <select id="surgery" name="entry.112065081">
-            <option value="" selected disabled>Choose</option>
-            <option>Yes</option>
-            <option>No</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Medications?  entry.2039522098 -->
-      <div class="form-group">
-        <label for="meds">Are you currently taking any medication? (If yes, please mention)</label>
-        <select id="meds" name="entry.2039522098">
-          <option value="" selected disabled>Choose</option>
-          <option>Yes</option>
-          <option>No</option>
-        </select>
-      </div>
-
-      <!-- Recommended hidden fields; fbzx value can be any token, but keeping it present helps. -->
-      <input type="hidden" name="fvv" value="1">
-      <input type="hidden" name="pageHistory" value="0">
-      <input type="hidden" name="fbzx" value="8212305990156201007">
-
-      <div class="actions">
-        <button class="btn-primary" type="submit">Submit Registration</button>
-        <a class="btn-link" href="index.html" target="_self" rel="noopener">Back to Home</a>
-      </div>
-
-      <div id="thankyou" class="thankyou">✅ Thank you! Your information has been submitted.</div>
-    </form>
+    <div class="tiny">© <span id="y"></span> BloodZone • Designed for fast, frustration-free entry</div>
   </div>
 
-  <script>
-    // Show a friendly confirmation without navigating away.
-    const form = document.getElementById('donorForm');
-    const thanks = document.getElementById('thankyou');
+  <!-- Hidden iframe to keep user on the page after submit -->
+  <iframe name="hidden_iframe" style="display:none"></iframe>
 
-    // Prevent double submits
-    let justSubmitted = false;
+<script>
+  // Current year
+  document.getElementById('y').textContent = new Date().getFullYear();
 
-    form.addEventListener('submit', function () {
-      justSubmitted = true;
-      // After Google handles the POST inside the hidden iframe, we show a success.
-      setTimeout(() => {
-        if (justSubmitted) {
-          thanks.style.display = 'block';
-          form.reset();
-          // Reset selects placeholder state after reset
-          document.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
-          // Auto-hide after a bit (optional)
-          setTimeout(() => (thanks.style.display = 'none'), 6000);
-          justSubmitted = false;
-        }
-      }, 900);
-    });
-  </script>
+  // Inline success flow without leaving the page
+  const form = document.getElementById('donorForm');
+  const success = document.getElementById('success');
+  const card = document.getElementById('card');
+
+  let submitted = false;
+  form.addEventListener('submit', function(){
+    submitted = true;
+    // Tiny micro-interaction
+    form.classList.add('fade-out');
+    setTimeout(()=>form.classList.remove('fade-out'), 260);
+  });
+
+  // When the Google endpoint responds to our hidden iframe, show success
+  window.addEventListener('message',()=>{ /* no-op: kept for hosts that relay */ }, false);
+  // Fallback: reveal success shortly after submit if hidden iframe returns silently
+  const iframe = document.querySelector('iframe[name="hidden_iframe"]');
+  iframe.addEventListener('load', function(){
+    if(!submitted) return;
+    form.reset();
+    form.style.display = 'none';
+    success.classList.add('show');
+    submitted = false;
+  });
+
+  // Client-side quick checks
+  form.addEventListener('submit', function(e){
+    // Ensure selects chosen
+    const selects = form.querySelectorAll('select[required]');
+    for(const s of selects){
+      if(!s.value){
+        e.preventDefault();
+        s.focus();
+        return;
+      }
+    }
+  });
+</script>
 </body>
 </html>
