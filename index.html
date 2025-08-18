@@ -26,7 +26,7 @@
     <div class="container mx-auto px-6 py-3 flex justify-between items-center">
       <div class="flex items-center space-x-4">
         <a href="https://github.com/bdvirtual/bloodzone" target="_blank">
-          <img src="assets/logo.png" alt="BloodZone Logo" class="h-12 w-12 rounded-full object-cover">
+          
         </a>
         <h1 class="text-2xl font-bold text-red-600">BloodZone</h1>
       </div>
@@ -82,49 +82,50 @@
   <template id="find-donors-template">
     <section class="bg-red-600 text-white py-16 text-center">
       <div class="container mx-auto px-6">
-        <div class="flex flex-col md:flex-row justify-between items-start mb-8">
-          <div class="w-full md:w-2/3">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4">Find a Lifesaver Near You</h1>
-            <blockquote class="text-lg text-red-100 italic mb-8 max-w-3xl mx-auto">
-              "And whoever saves one – it is as if he had saved mankind entirely." (5:32)
-            </blockquote>
-          </div>
-          <div class="w-full md:w-1/3 md:text-right">
-            <div class="bg-red-600 rounded-xl shadow-lg p-6 text-white">
-              <h3 class="text-xl font-bold mb-4">Donor Statistics</h3>
-              <p class="text-white mb-2"><strong>Matching Donors:</strong> <span id="matching-count">0</span></p>
-              <p class="text-white"><strong>Total Donors:</strong> <span id="total-count">0</span></p>
-            </div>
-          </div>
-        </div>
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">Find a Lifesaver Near You</h1>
+        <blockquote class="text-lg text-red-100 italic mb-8 max-w-3xl mx-auto">
+          "And whoever saves one – it is as if he had saved mankind entirely." (5:32)
+        </blockquote>
         <div id="blood-group-stats" class="mb-8 grid grid-cols-4 md:grid-cols-8 gap-2 max-w-2xl mx-auto"></div>
-        <div class="bg-white/10 backdrop-blur-sm p-6 rounded-xl max-w-4xl mx-auto">
-          <div class="flex flex-col gap-6">
-            <div>
-              <label class="block text-sm font-medium text-red-100 mb-2">Blood Group</label>
-              <div id="blood-group-buttons" class="flex flex-wrap gap-3 justify-center">
-                <button type="button" data-group="" class="blood-cell-btn active">All</button>
-                <button type="button" data-group="A+" class="blood-cell-btn">A+</button>
-                <button type="button" data-group="A-" class="blood-cell-btn">A-</button>
-                <button type="button" data-group="B+" class="blood-cell-btn">B+</button>
-                <button type="button" data-group="B-" class="blood-cell-btn">B-</button>
-                <button type="button" data-group="AB+" class="blood-cell-btn">AB+</button>
-                <button type="button" data-group="AB-" class="blood-cell-btn">AB-</button>
-                <button type="button" data-group="O+" class="blood-cell-btn">O+</button>
-                <button type="button" data-group="O-" class="blood-cell-btn">O-</button>
+        <div class="bg-white/10 backdrop-blur-sm p-6 rounded-xl max-w-6xl mx-auto">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Filter Controls -->
+            <div class="lg:col-span-2 flex flex-col gap-6">
+              <div class="text-left">
+                <label class="block text-sm font-medium text-red-100 mb-3 text-center md:text-left">Select Blood Group</label>
+                <div id="blood-group-buttons" class="flex flex-wrap gap-3 justify-center md:justify-start">
+                  <button type="button" data-group="" class="blood-cell-btn active">All</button>
+                  <button type="button" data-group="A+" class="blood-cell-btn">A+</button>
+                  <button type="button" data-group="A-" class="blood-cell-btn">A-</button>
+                  <button type="button" data-group="B+" class="blood-cell-btn">B+</button>
+                  <button type="button" data-group="B-" class="blood-cell-btn">B-</button>
+                  <button type="button" data-group="AB+" class="blood-cell-btn">AB+</button>
+                  <button type="button" data-group="AB-" class="blood-cell-btn">AB-</button>
+                  <button type="button" data-group="O+" class="blood-cell-btn">O+</button>
+                  <button type="button" data-group="O-" class="blood-cell-btn">O-</button>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+                <div class="text-left">
+                  <label for="status-filter" class="block text-sm font-medium text-red-100 mb-2">Availability</label>
+                  <select id="status-filter" class="w-full p-3 rounded-lg bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-red-300">
+                    <option value="">Any</option>
+                    <option value="Available">Available Now</option>
+                    <option value="Unavailable">Unavailable</option>
+                  </select>
+                </div>
+                <button id="search-btn" class="w-full bg-white text-red-600 font-bold p-3 rounded-lg hover:bg-red-100 transition duration-300 text-lg">Search</button>
               </div>
             </div>
-            <div class="flex flex-col md:flex-row gap-6">
-              <div class="flex-1">
-                <label for="status-filter" class="block text-sm font-medium text-red-100 mb-2">Availability</label>
-                <select id="status-filter" class="w-full p-3 rounded-lg bg-white text-gray-800">
-                  <option value="">Any</option>
-                  <option value="Available">Available Now</option>
-                  <option value="Unavailable">Unavailable</option>
-                </select>
+            <!-- Dynamic Count Card -->
+            <div class="bg-white/20 rounded-xl p-6 flex flex-col justify-center items-center text-center gap-4">
+              <div>
+                <p class="text-sm font-medium text-red-100">Matching Donors</p>
+                <p id="filtered-donors-card" class="text-5xl font-bold">0</p>
               </div>
-              <div class="flex items-end">
-                <button id="search-btn" class="w-full bg-white text-red-600 font-bold p-3 rounded-lg hover:bg-red-100">Search</button>
+              <div>
+                <p class="text-sm font-medium text-red-100">Total Donors</p>
+                <p id="total-donors-card" class="text-3xl font-semibold">0</p>
               </div>
             </div>
           </div>
@@ -247,7 +248,7 @@
         "Blood Group",
         "Phone Number",
         "Emergency Contact Name & Number",
-        "Present Address (Area, Ward, Thana, City/District)",
+        "Present Address (Area, Word, Thana, City/District)",
         "Are you currently healthy and free from major illness?",
         "Have you had any surgery or serious illness in the last 6 months?",
         "Are you currently taking any medication? (If yes, please mention)"
@@ -262,7 +263,7 @@
         "Blood Group": "BloodGroup",
         "Phone Number": "Phone",
         "Emergency Contact Name & Number": "EmergencyContact",
-        "Present Address (Area, Ward, Thana, City/District)": "Location",
+        "Present Address (Area, Word, Thana, City/District)": "Location",
         "Are you currently healthy and free from major illness?": "HealthStatus",
         "Have you had any surgery or serious illness in the last 6 months?": "RecentSurgery",
         "Are you currently taking any medication? (If yes, please mention)": "OnMedication"
@@ -335,8 +336,8 @@
       const donorGrid = document.getElementById("donor-grid");
       const loading = document.getElementById("loading-indicator");
       const noResults = document.getElementById("no-results");
-      const matchingCount = document.getElementById("matching-count");
-      const totalCount = document.getElementById("total-count");
+      const matchingCount = document.getElementById("filtered-donors-card");
+      const totalCount = document.getElementById("total-donors-card");
 
       donorGrid.innerHTML = "";
       loading.classList.add("hidden");
