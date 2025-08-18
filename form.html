@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BloodZone | Donor Registration</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0; padding: 0;
+      background: linear-gradient(to right, #ffebee, #ffcdd2);
+      color: #333;
+    }
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #d32f2f;
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 6px;
+      color: #444;
+    }
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1em;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #d32f2f;
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      margin-top: 10px;
+    }
+    button:hover { background: #b71c1c; }
+    .btn-link {
+      background: none;
+      border: none;
+      color: #d32f2f;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: underline;
+      margin-top: 15px;
+    }
+    .btn-link:hover {
+      color: #b71c1c;
+    }
+    .thankyou {
+      display: none;
+      text-align: center;
+      background: #e8f5e9;
+      border: 2px solid #4caf50;
+      color: #2e7d32;
+      padding: 20px;
+      border-radius: 8px;
+      font-size: 1.2em;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Donor Registration</h1>
+    <form id="donorForm" 
+          action="https://docs.google.com/forms/d/e/1FAIpQLSe2WB1FkMeNVb_OYFr5l3Vz4-fI4f-9bQWzJiihm34hAaJYIw/formResponse" 
+          method="POST" target="hidden_iframe">
+
+      <!-- Full Name -->
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" name="entry.123456789" id="name" placeholder="Enter your full name" required>
+      </div>
+
+      <!-- Gender -->
+      <div class="form-group">
+        <label for="gender">Gender</label>
+        <select name="entry.234567890" id="gender" required>
+          <option value="">-- Select Gender --</option>
+          <option>Male</option>
+          <option>Female</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <!-- Blood Group -->
+      <div class="form-group">
+        <label for="blood">Blood Group</label>
+        <select name="entry.345678901" id="blood" required>
+          <option value="">-- Select Blood Group --</option>
+          <option>A+</option><option>A-</option>
+          <option>B+</option><option>B-</option>
+          <option>O+</option><option>O-</option>
+          <option>AB+</option><option>AB-</option>
+        </select>
+      </div>
+
+      <!-- Phone -->
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="tel" name="entry.456789012" id="phone" placeholder="e.g. +8801XXXXXXXXX" required>
+      </div>
+
+      <!-- Location -->
+      <div class="form-group">
+        <label for="location">Location</label>
+        <input type="text" name="entry.567890123" id="location" placeholder="City / District" required>
+      </div>
+
+      <button type="submit">Submit Registration</button>
+      <button type="button" class="btn-link" onclick="goHome()">⬅ Back to Home</button>
+    </form>
+
+    <div class="thankyou" id="thankyouMsg">
+      ✅ Thank you! Your donor information has been submitted successfully.
+      <br><br>
+      <button class="btn-link" onclick="goHome()">⬅ Back to Home</button>
+    </div>
+  </div>
+
+  <iframe name="hidden_iframe" style="display:none;"></iframe>
+
+  <script>
+    const form = document.getElementById("donorForm");
+    const thankyouMsg = document.getElementById("thankyouMsg");
+
+    form.addEventListener("submit", function() {
+      setTimeout(() => {
+        thankyouMsg.style.display = "block";
+        form.style.display = "none";
+        form.reset();
+      }, 1000);
+    });
+
+    function goHome() {
+      window.location.href = "index.html"; // change if homepage filename differs
+    }
+  </script>
+</body>
+</html>
