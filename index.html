@@ -240,24 +240,10 @@
         console.error("CSV is empty");
         return [];
       }
-      console.log("CSV Headers:", lines[0]);
-      const headers = parseCSVLine(lines[0]).map(h => h.trim());
-      const expectedHeaders = [
-        "Full Name",
-        "Gender",
-        "Blood Group",
-        "Phone Number",
-        "Emergency Contact Name & Number",
-        "Present Address (Area, Word, Thana, City/District)",
-        "Are you currently healthy and free from major illness?",
-        "Have you had any surgery or serious illness in the last 6 months?",
-        "Are you currently taking any medication? (If yes, please mention)"
-      ];
-      if (!headers.every((h, i) => h === expectedHeaders[i])) {
-        console.error("Header mismatch. Expected:", expectedHeaders, "Got:", headers);
-      }
-      const result = [];
-      const headerMapping = {
+      const actualHeaders = parseCSVLine(lines[0]).map(h => h.trim());
+
+      // Define the mapping from CSV header names to desired object property names
+      const headerMap = {
         "Full Name": "Name",
         "Gender": "Gender",
         "Blood Group": "BloodGroup",
@@ -268,29 +254,42 @@
         "Have you had any surgery or serious illness in the last 6 months?": "RecentSurgery",
         "Are you currently taking any medication? (If yes, please mention)": "OnMedication"
       };
-      const requiredIndices = {};
-      headers.forEach((header, index) => {
-        for (const key in headerMapping) {
-          if (key.trim() === header) requiredIndices[headerMapping[key]] = index;
+
+      // Create an index map from desired property name to actual column index
+      const columnIndex = {};
+      for (const prop in headerMap) {
+        const index = actualHeaders.indexOf(prop);
+        if (index !== -1) {
+          columnIndex[headerMap[prop]] = index;
+        } else {
+          // Log a warning if a crucial header is missing, but don't stop execution
+          console.warn(`Expected header "${prop}" not found in CSV.`);
         }
-      });
+      }
+
+      const result = [];
       for (let i = 1; i < lines.length; i++) {
         const values = parseCSVLine(lines[i]);
-        if (values.length < headers.length) {
+        // Ensure the row has enough columns based on the actual headers
+        if (values.length < actualHeaders.length) {
           console.warn(`Skipping malformed line ${i}:`, lines[i]);
           continue;
         }
+
         const donor = {
-          Name: values[requiredIndices.Name] || "",
-          Gender: values[requiredIndices.Gender] || "",
-          BloodGroup: values[requiredIndices.BloodGroup] || "",
-          Phone: values[requiredIndices.Phone] || "",
-          EmergencyContact: values[requiredIndices.EmergencyContact] || "",
-          Location: values[requiredIndices.Location] || "",
-          Status: values[requiredIndices.HealthStatus] === "Yes" ? "Available" : "Unavailable",
-          RecentSurgery: values[requiredIndices.RecentSurgery] || "",
-          OnMedication: values[requiredIndices.OnMedication] || ""
+          // Use columnIndex to retrieve values based on their mapped index
+          Name: values[columnIndex.Name] || "",
+          Gender: values[columnIndex.Gender] || "",
+          BloodGroup: values[columnIndex.BloodGroup] || "",
+          Phone: values[columnIndex.Phone] || "",
+          EmergencyContact: values[columnIndex.EmergencyContact] || "",
+          Location: values[columnIndex.Location] || "",
+          // Ensure HealthStatus index exists before accessing
+          Status: columnIndex.HealthStatus !== undefined && values[columnIndex.HealthStatus] === "Yes" ? "Available" : "Unavailable",
+          RecentSurgery: values[columnIndex.RecentSurgery] || "",
+          OnMedication: values[columnIndex.OnMedication] || ""
         };
+        // Only add donor if essential fields are present
         if (donor.Name && donor.BloodGroup) result.push(donor);
       }
       console.log("Parsed Donors:", result);
@@ -414,9 +413,14 @@
                 <p><strong>Name:</strong> ${contactBtn.dataset.donorName}</p>
                 <div class="flex items-center justify-between">
                     <p><strong>Phone:</strong> ${contactBtn.dataset.donorPhone}</p>
-                    <a href="tel:${contactBtn.dataset.donorPhone}" class="text-green-600 hover:text-green-800 text-2xl transition-colors duration-200" aria-label="Call Now">
-                    📞
-                    </a>
+                    <div class="flex space-x-2">
+                        <a href="sms:${contactBtn.dataset.donorPhone}" class="text-blue-600 hover:text-blue-800 text-2xl transition-colors duration-200" aria-label="Send Message">
+                            💬
+                        </a>
+                        <a href="tel:${contactBtn.dataset.donorPhone}" class="text-green-600 hover:text-green-800 text-2xl transition-colors duration-200" aria-label="Call Now">
+                            📞
+                        </a>
+                    </div>
                 </div>
                 <p><strong>Emergency:</strong> ${contactBtn.dataset.donorEmergencyContact || "N/A"}</p>
                 <p><strong>Medical History:</strong> ${medicalHistory}</p>
