@@ -26,7 +26,7 @@
     <div class="container mx-auto px-6 py-3 flex justify-between items-center">
       <div class="flex items-center space-x-4">
         <a href="https://github.com/bdvirtual/bloodzone" target="_blank">
-          
+          <!-- You can add an SVG icon for GitHub here if desired -->
         </a>
         <h1 class="text-2xl font-bold text-red-600">BloodZone</h1>
       </div>
@@ -412,7 +412,12 @@
               const medicalHistory = (contactBtn.dataset.donorRecentSurgery === "Yes" || (contactBtn.dataset.donorOnMedication && contactBtn.dataset.donorOnMedication.toLowerCase() !== "no")) ? "Positive" : "Negative";
               contactDetails.innerHTML = `
                 <p><strong>Name:</strong> ${contactBtn.dataset.donorName}</p>
-                <p><strong>Phone:</strong> ${contactBtn.dataset.donorPhone}</p>
+                <div class="flex items-center justify-between">
+                    <p><strong>Phone:</strong> ${contactBtn.dataset.donorPhone}</p>
+                    <a href="tel:${contactBtn.dataset.donorPhone}" class="text-green-600 hover:text-green-800 text-2xl transition-colors duration-200" aria-label="Call Now">
+                    📞
+                    </a>
+                </div>
                 <p><strong>Emergency:</strong> ${contactBtn.dataset.donorEmergencyContact || "N/A"}</p>
                 <p><strong>Medical History:</strong> ${medicalHistory}</p>
               `;
